@@ -1,5 +1,5 @@
 'use strict';
 
 module.exports = {
-  db: 'mongodb://localhost/hci-dev'
+  db: 'mongodb://localhost/simple-nodejs'
 };
