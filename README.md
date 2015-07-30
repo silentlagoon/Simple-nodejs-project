@@ -11,8 +11,7 @@ $ export NODE_ENV=development
 $ npm start
 ```
 
-## Foundry
+## Testing
 ```sh
-$ npm run-script foundry x.x.x
+$ mocha
 ```
-NOTE: x.x.x - version of realise
