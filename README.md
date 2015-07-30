@@ -7,6 +7,7 @@ $ npm install
 ```
 ## Launching
 ```sh
+$ export NODE_ENV=development
 $ npm start
 ```
 
