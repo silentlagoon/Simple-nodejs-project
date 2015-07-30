@@ -12,5 +12,6 @@ $ npm start
 
 ## Foundry
 ```sh
-$ npm run-script foundry
+$ npm run-script foundry x.x.x
 ```
+NOTE: x.x.x - version of realise
