@@ -33,17 +33,15 @@ var CheckIn = db.model('Checkin', CheckInSchema);
 function makeRequest(request, res) {
     var checkIn = db.model('checkins', CheckInSchema);
     checkIn.find(request).lean().exec(function(err, checkins) {
-        console.log('I am here');
+        if(err) {
+            res.status(400).send(err);
+        }
         res.status(200).send(checkins);
     });
 }
 
-app.get('/', function(req, res) {
-  res.send('Simple NodeJS app');
-});
-
 app.get('/checkin', function(req, res) {
-    if(req.query.username != undefined && req.query.location != undefined) {
+    if(req.query.username && req.query.location) {
         var checkIn = new CheckIn({
             username: req.query.username,
             location: req.query.location
@@ -51,7 +49,7 @@ app.get('/checkin', function(req, res) {
 
         checkIn.save(function(err) {
             if(err){
-                console.log(err);
+                res.status(400).send(err);
             }
         });
 
@@ -65,7 +63,7 @@ app.get('/checkin', function(req, res) {
 });
 
 app.get('/getcheckins', function(req, res) {
-    if(req.query.username != undefined) {
+    if(req.query.username) {
         makeRequest({username : req.query.username}, res);
     } else if (req.query.location != undefined) {
         makeRequest({location : req.query.location}, res);
