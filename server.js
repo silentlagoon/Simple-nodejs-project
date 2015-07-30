@@ -1,12 +1,13 @@
 'use strict';
 
 var express = require('express'),
-    config = require('./config/init'),
+    config = require('./config'),
     mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    chalk = require('chalk');
+    chalk = require('chalk'),
+    trim = require('trim');
 
-var db = mongoose.connect(config.db, function(err) {
+var db = mongoose.connect(config.development.db, function(err) {
   if (err) {
     console.error(chalk.red('Could not connect to MongoDB!'));
     console.log(chalk.red(err));
@@ -41,21 +42,27 @@ function makeRequest(request, res) {
 }
 
 app.get('/checkin', function(req, res) {
-    if(req.query.username && req.query.location) {
+    var username = req.query.username,
+        location = req.query.location;
+
+    if(username && location) {
+//Making simple input data check
+        username = trim(username);
+        location = trim(location);
+
         var checkIn = new CheckIn({
-            username: req.query.username,
-            location: req.query.location
+            username: username,
+            location: location
         });
 
         checkIn.save(function(err) {
             if(err){
                 res.status(400).send(err);
             }
-        });
-
-        res.status(200).send({
-            'username' : req.query.username,
-            'location': req.query.location
+            res.status(200).send({
+                'username' : username,
+                'location': location
+            });
         });
     } else {
         res.status(400).send('You should provide username and location as a GET parameters');
@@ -63,10 +70,15 @@ app.get('/checkin', function(req, res) {
 });
 
 app.get('/getcheckins', function(req, res) {
+    var username = req.query.username,
+        location = req.query.location;
+
     if(req.query.username) {
-        makeRequest({username : req.query.username}, res);
-    } else if (req.query.location != undefined) {
-        makeRequest({location : req.query.location}, res);
+        username = trim(username);
+        makeRequest({username : username}, res);
+    } else if (location) {
+        location = trim(location);
+        makeRequest({location : location}, res);
     } else {
         res.status(400).send('No params has been passed!');
     }

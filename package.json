@@ -4,8 +4,7 @@
   "description": "Simple NodeJS app",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "foundry": "./node_modules/.bin/foundry release"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "4.13.x",
@@ -13,7 +12,8 @@
     "foundry": "3.1.x",
     "foundry-release-git": "1.1.x",
     "chalk": "1.1.x",
-    "lodash": "3.10.x"
+    "lodash": "3.10.x",
+    "trim": "0.0.1"
   },
   "engines": {
     "node": "0.12.2"

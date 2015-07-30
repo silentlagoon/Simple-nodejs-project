@@ -2,17 +2,29 @@ var should = require('should'),
     assert = require('assert'),
     request = require('supertest'),
     mongoose = require('mongoose'),
-    config = require('../config/init');
+    config = require('../config');
 
-describe('Routing', function() {
-    var url = 'localhost:' + config.port;
+describe('App', function() {
+    var url = 'localhost:' + config.development.port,
+        db = mongoose.connect(config.development.db),
+        CheckInSchema = new mongoose.Schema({
+            username : {
+                type: String
+            },
+            location : {
+                type: String
+            },
+            date : {
+                type: Date,
+                default: Date.now
+            }
+        });
 
-    before(function (done) {
-        mongoose.connect(config.db);
-        done();
+    before(function() {
+        mongoose.connection.db.dropCollection('checkins');
     });
 
-    describe('Checkin page', function() {
+    describe('/checkin', function() {
         it('should return error response if no get params provided', function (done) {
             request(url)
                 .get('/checkin')
@@ -30,9 +42,15 @@ describe('Routing', function() {
                     done();
                 });
         });
+
+        it('should return  DB record', function (done) {
+            var result = mongoose.model('checkins', CheckInSchema).find({ username: 'foo'});
+            result.should.be.true;
+            done();
+        });
     });
 
-    describe('Checkins page', function() {
+    describe('/getcheckins', function() {
         it('should return error response if no get params provided', function (done) {
             request(url)
                 .get('/getcheckins')
