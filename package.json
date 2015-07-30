@@ -22,5 +22,10 @@
     "type": "git",
     "url": "https://github.com/JIucToyxuu/sipmle-nodejs-app.git"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "mocha": "~2.2.5",
+    "supertest": "~1.0.1",
+    "should": "~7.0.2"
+  }
 }
