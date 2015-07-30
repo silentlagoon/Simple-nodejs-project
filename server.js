@@ -7,33 +7,17 @@ var express = require('express'),
     chalk = require('chalk'),
     trim = require('trim');
 
-var db = mongoose.connect(config.development.db, function(err) {
+var db = mongoose.connect(config.db, function(err) {
   if (err) {
     console.error(chalk.red('Could not connect to MongoDB!'));
     console.log(chalk.red(err));
   }
 });
-
+var models = require('./models')(db);
 var app = express();
 
-var CheckInSchema = new Schema({
-    username : {
-        type: String
-    },
-    location : {
-        type: String
-    },
-    date : {
-        type: Date,
-        default: Date.now
-    }
-});
-
-var CheckIn = db.model('Checkin', CheckInSchema);
-
 function makeRequest(request, res) {
-    var checkIn = db.model('checkins', CheckInSchema);
-    checkIn.find(request).lean().exec(function(err, checkins) {
+    models.Checkin.find(request).lean().exec(function(err, checkins) {
         if(err) {
             res.status(400).send(err);
         }
@@ -46,11 +30,11 @@ app.get('/checkin', function(req, res) {
         location = req.query.location;
 
     if(username && location) {
-//Making simple input data check
+        //Making simple input data check
         username = trim(username);
         location = trim(location);
 
-        var checkIn = new CheckIn({
+        var checkIn = new models.Checkin({
             username: username,
             location: location
         });
@@ -58,11 +42,12 @@ app.get('/checkin', function(req, res) {
         checkIn.save(function(err) {
             if(err){
                 res.status(400).send(err);
+            } else {
+                res.status(200).send({
+                    'username': username,
+                    'location': location
+                });
             }
-            res.status(200).send({
-                'username' : username,
-                'location': location
-            });
         });
     } else {
         res.status(400).send('You should provide username and location as a GET parameters');
@@ -72,8 +57,9 @@ app.get('/checkin', function(req, res) {
 app.get('/getcheckins', function(req, res) {
     var username = req.query.username,
         location = req.query.location;
-
-    if(req.query.username) {
+    if(username && location) {
+        res.status(400).send('Just one parameter should be passed!');
+    } else if(req.query.username) {
         username = trim(username);
         makeRequest({username : username}, res);
     } else if (location) {
